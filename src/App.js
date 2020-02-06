@@ -9,7 +9,9 @@ class App extends Component {
   constructor() {
     super();
     this.state = {
-      paintings: paintings
+      paintings: paintings,
+      score: 0,
+      msg: "Press a painting to start"
     };
   }
 
@@ -19,21 +21,26 @@ class App extends Component {
   }
 
   handleClick = id => {
+    let score = this.state.score;
+    let msg = this.state.msg;
     const paintingsState = this.state.paintings;
     // Stores the painting clicked
     const paintingClicked = paintingsState.filter(
       painting => painting.id === id
     );
     if (paintingClicked[0].clicked) {
-      alert("Already clicked");
+      score = 0;
       this.resetState();
+      msg = "Press a painting to start";
     } else {
       paintingClicked[0].clicked = true;
       this.shufflePaintings(paintingsState);
+      score++;
+      msg = "You are doing great";
     }
 
     // Changes the state of clicked to true and shuffles the paintings
-    this.setState({ paintingsState });
+    this.setState({ paintingsState, score, msg });
   };
 
   shufflePaintings = paintings => {
@@ -45,13 +52,14 @@ class App extends Component {
     paintingsState.forEach(painting => {
       painting.clicked = false;
     });
+    this.setState({ score: 0 });
   };
 
   render() {
-    const { paintings } = this.state;
+    const { paintings, score, msg } = this.state;
     return (
       <div className="App">
-        <Header />
+        <Header score={score} msg={msg} />
 
         <div className="d-flex flex-wrap justify-content-center">
           {paintings.map(({ id, name, img, clicked }) => (
